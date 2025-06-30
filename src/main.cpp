@@ -3,21 +3,20 @@
 #include <MQTT.h>
 
 
-const char* ssid = "AKEELHOME";
-const char* password = "011265225";
+const char* ssid = "AKEELHOME"; // Your Wi-Fi SSID
+const char* password = "011265225"; // Your Wi-Fi Password
 const char* mqtt_server = "5.196.78.28"; // or your broker IP/domain
 const int mqtt_port = 1883; // Default MQTT port is 1883
 
-WiFiClient espClient;
-MQTTClient client;
+WiFiClient espClient;  // Create a WiFi client instance
+MQTTClient client; // Create an MQTT client instance
 
 void connectMQTT() {
-  client.setOptions(60, true, 1000); // Only 3 arguments
   while (!client.connected()) {
     Serial.print("Connecting to MQTT...");
     if (client.connect("esp32client")) {
       Serial.println("connected!");
-      client.publish("akeelhome/esp32/test", "Hello from ESP32 with MQTT v5!");
+      client.publish("akeelhome/esp32/test", "Hello from ESP32 with MQTT");
     } else {
       Serial.print("failed, status code =");
       Serial.print(client.lastError());
@@ -49,8 +48,11 @@ void setupWIFI(){
 void setup() {
   Serial.begin(9600);
   setupWIFI();
-  client.begin(mqtt_server, mqtt_port, espClient); // Only 3 arguments
-  client.setOptions(60, true, 1000); // Only 3 arguments
+  client.begin(mqtt_server, mqtt_port, espClient); // Initialize MQTT client with server and port
+  client.setOptions(
+    60, // Set MQTT options: keep alive interval
+    true,  // Set clean session
+    1000); // Set reconnect timeout
   connectMQTT();
 }
 
