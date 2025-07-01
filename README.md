@@ -1,4 +1,4 @@
-# ESP32 MQTT v5 Publisher Example
+# ESP32 MQTT v5 Publisher
 
 This project demonstrates how to connect an ESP32 to Wi-Fi and publish MQTT messages to a broker using the ESP-IDF framework with MQTT v5 support.
 
