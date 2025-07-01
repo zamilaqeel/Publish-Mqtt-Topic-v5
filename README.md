@@ -1,19 +1,20 @@
-# ESP32 MQTT Publisher Example
+# ESP32 MQTT v5 Publisher Example
 
-This project demonstrates how to connect an ESP32 to Wi-Fi and publish MQTT messages to a broker using the [256dpi/MQTT](https://github.com/256dpi/arduino-mqtt) library.
+This project demonstrates how to connect an ESP32 to Wi-Fi and publish MQTT messages to a broker using the ESP-IDF framework with MQTT v5 support.
 
 ## Features
 
 - Connects ESP32 to a Wi-Fi network
-- Connects to a public MQTT broker
+- Connects to a public MQTT broker (MQTT v5)
 - Publishes a test message to a topic
+- Subscribes to a topic and prints received messages
 - Reconnects automatically if Wi-Fi or MQTT connection is lost
 
 ## Requirements
 
 - ESP32-S3 development board
-- PlatformIO (recommended) or Arduino IDE
-- MQTT broker (public: [test.mosquitto.org](https://test.mosquitto.org/))
+- PlatformIO (recommended) with ESP-IDF framework
+- MQTT broker (public: [HiveMQ](https://www.hivemq.com/public-mqtt-broker/))
 - MQTT client for testing ([MQTT Explorer](https://mqtt-explorer.com/))
 
 ## Getting Started
@@ -21,8 +22,8 @@ This project demonstrates how to connect an ESP32 to Wi-Fi and publish MQTT mess
 ### 1. Clone this repository
 
 ```sh
-git clone https://github.com/zamilaqeel/Publish-Mqtt-Topic.git
-cd Publish-Mqtt-Topic
+git clone https://github.com/zamilaqeel/Publish-Mqtt-Topic-v5.git
+cd Publish-Mqtt-Topic-v5
 ```
 
 ### 2. Open with PlatformIO (via VS Code)
@@ -31,13 +32,14 @@ cd Publish-Mqtt-Topic
 
 ### 3. Configure Wi-Fi and MQTT
 
-Edit `src/main.cpp` and set your Wi-Fi and MQTT broker details:
+Edit `src/main.c` and set your Wi-Fi and MQTT broker details:
 
-```cpp
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
-const char* mqtt_server = "BROKER_IP_OR_HOSTNAME";
-const int mqtt_port = 1883;
+```c
+strcpy((char*)wifi_config.sta.ssid, "YOUR_WIFI_SSID");
+strcpy((char*)wifi_config.sta.password, "YOUR_WIFI_PASSWORD");
+
+// For MQTT broker:
+.broker.address.uri = "mqtt://broker.hivemq.com:1883", // or use your broker's IP
 ```
 
 ### 4. Build and Upload
@@ -52,7 +54,7 @@ const int mqtt_port = 1883;
 
 - Click the **PlatformIO: Monitor** button or run:
   ```
-  pio device monitor
+  pio device monitor --baud 115200 
   ```
 - You should see connection status and publish messages.
 
@@ -60,17 +62,17 @@ const int mqtt_port = 1883;
 
 - Use an MQTT client to subscribe to the topic:
   ```
-  akeelhome/esp32/test
+  test/topic
   ```
 - Example using `mosquitto_sub`:
   ```
-  mosquitto_sub -h 5.196.78.28 -t akeelhome/esp32/test -v
+  mosquitto_sub -h broker.hivemq.com -t test/topic -v
   ```
 
 ## File Structure
 
 ```
-Publish-Mqtt-Topic/
+Publish-Mqtt-Topic-v5/
 ├── .gitignore
 ├── platformio.ini
 ├── README.md
@@ -79,28 +81,26 @@ Publish-Mqtt-Topic/
 ├── lib/
 │   └── README
 ├── src/
-│   └── main.cpp
+│   └── main.c
 ├── test/
 │   └── README
-└── .pio/                # PlatformIO build system folder (auto-generated, can be ignored)
-    └── ...              # Build artifacts and dependencies
-└── .vscode/             # VS Code settings (optional)
+└── .pio/
+    └── ...
+└── .vscode/
     └── ...
 ```
 
 ## Example Output
 
 ```
-Connecting to AKEELHOME
-............................................
-WiFi connected to AKEELHOME
-IP address: 192.168.18.97
-Connecting to MQTT...connected!
+I (xxxx) WIFI_TEST: Got IP
+I (xxxx) WIFI_TEST: MQTT Connected
+I (xxxx) WIFI_TEST: MQTT Data: test/topic = Hello from ESP32!
 ```
 
 ## Troubleshooting
 
-- **Not connecting to Wi-Fi:** Check your SSID and password.
+- **Not connecting to Wi-Fi:** Check your SSID and password. (use a 2.4GHz Wi-Fi connection)
 - **Not connecting to MQTT:** Check broker address, port, and network firewall.
 - **No messages in MQTT client:**  
   Make sure you are subscribing to the correct topic and broker.  
@@ -110,10 +110,14 @@ Connecting to MQTT...connected!
   1. **Open Command Prompt** on your computer.
   2. Type:
      ```
-     ping test.mosquitto.org
+     ping broker.hivemq.com
      ```
-  3. Copy the IP address shown in the output (e.g., `5.196.78.28`).
+  3. Copy the IP address shown in the output (e.g., `18.159.39.35`).
   4. In your code, set:
-     ```cpp
-     const char* mqtt_server = "5.196.78.28"; // Use the IP you found
+     ```c
+     .broker.address.uri = "mqtt://18.159.39.35:1883";
      ```
+
+---
+
+**Project by [zamilaqeel](https://github.com/zamilaqeel)**
