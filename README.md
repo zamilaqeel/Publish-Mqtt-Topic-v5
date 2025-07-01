@@ -14,7 +14,7 @@ This project demonstrates how to connect an ESP32 to Wi-Fi and publish MQTT mess
 
 - ESP32-S3 development board
 - USB-A to USB-C cable
-- PlatformIO with ESP-IDF framework
+- PlatformIO with ESP-IDF framework (via VS Code)
 - MQTT broker (public: [HiveMQ](https://www.hivemq.com/public-mqtt-broker/))
 - MQTT client for testing ([MQTT Explorer](https://mqtt-explorer.com/))
 
